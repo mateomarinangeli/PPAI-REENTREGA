@@ -39,4 +39,8 @@ public class Sesion {
     public void setFechaHoraFin(LocalDateTime fechaHoraFin) {
         this.fechaHoraFin = fechaHoraFin;
     }
+
+    public Empleado obtenerEmpleadoDeSesion() {
+        return usuario.getEmpleado();
+    }
 }

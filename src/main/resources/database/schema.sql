@@ -176,7 +176,6 @@ CREATE TABLE muestra_sismica (
     id_serie INTEGER NOT NULL,
     FOREIGN KEY (id_serie) REFERENCES serie_temporal(id_serie)
 );
-
 -- Tabla DetalleMuestraSismica
 CREATE TABLE detalle_muestra_sismica (
     id_detalle INTEGER PRIMARY KEY AUTOINCREMENT,

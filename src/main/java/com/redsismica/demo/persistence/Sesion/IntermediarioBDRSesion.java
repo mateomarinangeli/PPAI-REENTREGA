@@ -7,6 +7,7 @@ import com.redsismica.demo.persistence.Usuario.IIntermediarioBDRUsuario;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,14 +31,21 @@ public class IntermediarioBDRSesion implements IIntermediarioBDRSesion {
         Sesion sesion = new Sesion();
         sesion.setIdSesion(rs.getInt("id_sesion"));
 
-        // Mapeo de LocalDateTime
+        // Definimos el formateador correcto para "yyyy-MM-dd HH:mm"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
         String fechaInicioTexto = rs.getString("fecha_hora_inicio");
         String fechaFinTexto = rs.getString("fecha_hora_fin");
 
-        if (fechaInicioTexto != null) sesion.setFechaHoraInicio(LocalDateTime.parse(fechaInicioTexto));
-        if (fechaFinTexto != null) sesion.setFechaHoraFin(LocalDateTime.parse(fechaFinTexto));
+        if (fechaInicioTexto != null) {
+            sesion.setFechaHoraInicio(LocalDateTime.parse(fechaInicioTexto, formatter));
+        }
 
-        // Ensamblaje de la referencia Usuario
+        if (fechaFinTexto != null) {
+            sesion.setFechaHoraFin(LocalDateTime.parse(fechaFinTexto, formatter));
+        }
+
+        // Ensamblaje de Usuario
         int usuarioId = rs.getInt("id_usuario");
         if (!rs.wasNull()) {
             sesion.setUsuario(usuarioMapper.findById(usuarioId));
@@ -45,6 +53,7 @@ public class IntermediarioBDRSesion implements IIntermediarioBDRSesion {
 
         return sesion;
     }
+
 
     @Override
     public Sesion findById(int id) {

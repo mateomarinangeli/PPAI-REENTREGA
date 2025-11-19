@@ -4,6 +4,7 @@ package com.redsismica.demo.gestores;
 import com.redsismica.demo.domain.*;
 import com.redsismica.demo.domain.state.CambioEstado;
 import com.redsismica.demo.presentation.*;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 import com.redsismica.demo.persistence.AlcanceSismo.IIntermediarioBDRAlcanceSismo;
 import com.redsismica.demo.persistence.ClasificacionSismo.IIntermediarioBDRClasificacionSismo;
@@ -50,6 +51,7 @@ public class Gestor {
     private final IIntermediarioBDRSismografo intermediarioSismografo;
     private final IIntermediarioBDRUsuario intermediarioUsuario;
     private EventoSismico eventoSeleccionado;
+    private Sesion sesion;
 
 
     public Gestor(IIntermediarioBDRAlcanceSismo intermediarioAlcanceSismo,
@@ -81,6 +83,7 @@ public class Gestor {
         this.intermediarioUsuario = intermediarioUsuario;
     }
 
+
     /**
      * Método que se ejecuta al presionar el botón: simula la búsqueda de datos
      * de la base de datos para la pantalla de revisión.
@@ -101,6 +104,7 @@ public class Gestor {
     }
 
     public void opcRegistrarResultadoRevisionManual(PantallaPrincipal pantalla) {
+        this.sesion = intermediarioSesion.findById(2);
         List<EventoSismico> eventosAutoDetectados = buscarEventosSismicosAutoDetectados();
         List<EventoSismico> eventosOrdenados = ordenarEventos(eventosAutoDetectados);
         List<EventoResumenDTO> eventosParaMostrar = prepararEventosParaMostrar(eventosOrdenados);
@@ -233,7 +237,8 @@ public class Gestor {
         }
         else {
             LocalDateTime fechaHoraActual = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
-            List<CambioEstado> cambiosEstado = eventoSeleccionado.rechazarEvento(fechaHoraActual);
+            Empleado empleado = sesion.obtenerEmpleadoDeSesion();
+            List<CambioEstado> cambiosEstado = eventoSeleccionado.rechazarEvento(fechaHoraActual, empleado);
             intermediarioEventoSismico.update(eventoSeleccionado);
             intermediarioCambioEstado.update(cambiosEstado.get(0));
             intermediarioCambioEstado.insert(cambiosEstado.get(1), eventoSeleccionado.getIdEvento());

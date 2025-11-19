@@ -1,5 +1,6 @@
 package com.redsismica.demo.domain.state;
 
+import com.redsismica.demo.domain.Empleado;
 import com.redsismica.demo.domain.EventoSismico;
 
 import java.time.LocalDateTime;
@@ -13,14 +14,14 @@ public class BloqueadoEnRevision extends Estado {
     }
 
     @Override
-    public List<CambioEstado> rechazar(EventoSismico evento, LocalDateTime fechaHora) {
+    public List<CambioEstado> rechazar(EventoSismico evento, LocalDateTime fechaHora, Empleado empleado) {
         CambioEstado CEActual = buscarCEActual(evento);
         CEActual.setFechaHoraFin(fechaHora);
         CambioEstado nuevoCE = new CambioEstado();
         nuevoCE.setFechaHoraInicio(fechaHora);
         Rechazado rechazado = new Rechazado();
         nuevoCE.setEstado(rechazado);
-        nuevoCE.setEmpleado(evento.getAnalistaSupervisor());
+        nuevoCE.setEmpleado(empleado);
         evento.setEstadoActual(rechazado);
         evento.agregarCambioEstado(nuevoCE);
 

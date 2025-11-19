@@ -179,8 +179,8 @@ public class EventoSismico {
         return alcanceSismo != null && magnitud != null && origenGeneracion != null;
     }
 
-    public List<CambioEstado> rechazarEvento(LocalDateTime fechaHoraActual) {
-        List<CambioEstado> cambiosEstado = estadoActual.rechazar(this, fechaHoraActual);
+    public List<CambioEstado> rechazarEvento(LocalDateTime fechaHoraActual, Empleado empleado) {
+        List<CambioEstado> cambiosEstado = estadoActual.rechazar(this, fechaHoraActual, empleado);
         return cambiosEstado;
     }
 

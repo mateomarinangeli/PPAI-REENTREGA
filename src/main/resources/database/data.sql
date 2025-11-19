@@ -86,7 +86,7 @@ INSERT INTO sismografo (identificador_sismografo, fecha_adquisicion, nro_serie, 
 -- SESIONES (SIMPLIFICADAS)
 ------------------------------------------------------------
 INSERT INTO sesion (fecha_hora_inicio, fecha_hora_fin, id_usuario) VALUES
-('2025-05-01 08:00', '2025-05-01 16:00', 1),
+('2025-05-01 08:00', NULL, 1),
 ('2025-05-01 16:00', '2025-05-01 23:00', 2);
 
 ------------------------------------------------------------

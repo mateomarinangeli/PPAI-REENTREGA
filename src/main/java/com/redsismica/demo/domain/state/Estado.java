@@ -1,5 +1,6 @@
 package com.redsismica.demo.domain.state;
 
+import com.redsismica.demo.domain.Empleado;
 import com.redsismica.demo.domain.EventoSismico;
 
 import java.time.LocalDateTime;
@@ -85,7 +86,7 @@ public abstract class Estado {
         throw new UnsupportedOperationException("Operación 'verificarTiempoAceptacion' no soportada en este estado.");
     }
 
-    public List<CambioEstado> rechazar(EventoSismico evento, LocalDateTime fechaHora) {
+    public List<CambioEstado> rechazar(EventoSismico evento, LocalDateTime fechaHora, Empleado empleado) {
         throw new UnsupportedOperationException("Operación 'rechazar' no soportada en este estado.");
     }
 }
