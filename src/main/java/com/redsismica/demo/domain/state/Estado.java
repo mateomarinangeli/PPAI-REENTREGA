@@ -85,7 +85,7 @@ public abstract class Estado {
         throw new UnsupportedOperationException("Operación 'verificarTiempoAceptacion' no soportada en este estado.");
     }
 
-    public void rechazar() {
+    public List<CambioEstado> rechazar(EventoSismico evento, LocalDateTime fechaHora) {
         throw new UnsupportedOperationException("Operación 'rechazar' no soportada en este estado.");
     }
 }

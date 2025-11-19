@@ -20,11 +20,13 @@ import com.redsismica.demo.persistence.Sismografo.IIntermediarioBDRSismografo;
 import com.redsismica.demo.persistence.Usuario.IIntermediarioBDRUsuario;
 
 
+import javax.swing.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Clase Gestor: Capa de Servicio (Controlador de Negocio).
@@ -47,6 +49,8 @@ public class Gestor {
     private final IIntermediarioBDRSesion intermediarioSesion;
     private final IIntermediarioBDRSismografo intermediarioSismografo;
     private final IIntermediarioBDRUsuario intermediarioUsuario;
+    private EventoSismico eventoSeleccionado;
+
 
     public Gestor(IIntermediarioBDRAlcanceSismo intermediarioAlcanceSismo,
                   IIntermediarioBDRClasificacionSismo intermediarioClasificacionSismo,
@@ -153,7 +157,7 @@ public class Gestor {
     }
 
     public void tomarSeleccionEvento(int idEvento, PantallaPrincipal pantalla) {
-        EventoSismico eventoSeleccionado = intermediarioEventoSismico.findById(idEvento);
+        eventoSeleccionado = intermediarioEventoSismico.findById(idEvento);
         LocalDateTime fechaHoraActual = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
         List<CambioEstado> cambiosEstado = eventoSeleccionado.bloquear(fechaHoraActual);
 
@@ -220,5 +224,20 @@ public class Gestor {
         dto.denominacion = tipo.getDenominacion();
         dto.nombreUnidadMedida = tipo.getNombreUnidadMedida();
         return dto;
+    }
+
+    public void tomarSeleccionRechazo(PantallaPrincipal pantallaPrincipal) {
+        if (!eventoSeleccionado.validarEvento()) {
+            System.out.println("El evento está incompleto: le falta alcance, magnitud o origen.");
+            return;
+        }
+        else {
+            LocalDateTime fechaHoraActual = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+            List<CambioEstado> cambiosEstado = eventoSeleccionado.rechazarEvento(fechaHoraActual);
+            intermediarioEventoSismico.update(eventoSeleccionado);
+            intermediarioCambioEstado.update(cambiosEstado.get(0));
+            intermediarioCambioEstado.insert(cambiosEstado.get(1), eventoSeleccionado.getIdEvento());
+        }
+
     }
 }

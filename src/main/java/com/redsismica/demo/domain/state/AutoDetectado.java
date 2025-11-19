@@ -28,6 +28,7 @@ public class AutoDetectado extends Estado {
         nuevoCE.setEstado(bloqueado);
         nuevoCE.setEmpleado(eventoSismico.getAnalistaSupervisor());
         eventoSismico.setEstadoActual(bloqueado);
+        eventoSismico.agregarCambioEstado(nuevoCE);
 
         List<CambioEstado> cambiosEstado = new ArrayList<>();
         cambiosEstado.add(CEActual);

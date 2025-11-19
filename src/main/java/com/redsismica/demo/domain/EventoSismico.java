@@ -6,6 +6,7 @@ import com.redsismica.demo.domain.state.Estado;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EventoSismico {
     private LocalDateTime fechaHoraOcurrencia;
@@ -172,5 +173,18 @@ public class EventoSismico {
         datosSismicos.add(clasificacion.getNombre());
         datosSismicos.add(origenGeneracion.getNombre());
         return datosSismicos;
+    }
+
+    public boolean validarEvento() {
+        return alcanceSismo != null && magnitud != null && origenGeneracion != null;
+    }
+
+    public List<CambioEstado> rechazarEvento(LocalDateTime fechaHoraActual) {
+        List<CambioEstado> cambiosEstado = estadoActual.rechazar(this, fechaHoraActual);
+        return cambiosEstado;
+    }
+
+    public void agregarCambioEstado(CambioEstado nuevoCE) {
+        cambioEstado.add(nuevoCE);
     }
 }
