@@ -1,5 +1,10 @@
 package com.redsismica.demo.domain.state;
 
+import com.redsismica.demo.domain.EventoSismico;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 public abstract class Estado {
 
     private String nombre;
@@ -56,7 +61,7 @@ public abstract class Estado {
 
     // ---- Métodos de acción: tiran excepción por defecto ----
 
-    public void bloquear() {
+    public List<CambioEstado> bloquear(EventoSismico eventoSismico, LocalDateTime fechaHora) {
         throw new UnsupportedOperationException("Operación 'bloquear' no soportada en este estado.");
     }
 

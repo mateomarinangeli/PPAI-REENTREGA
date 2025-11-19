@@ -138,7 +138,7 @@ CREATE TABLE cambio_estado (
     id_cambio_estado INTEGER PRIMARY KEY AUTOINCREMENT,
     evento_id INTEGER NOT NULL,
     estado_id INTEGER NOT NULL,
-    empleado_id INTEGER NOT NULL,
+    empleado_id INTEGER,
     fecha_hora_inicio TEXT NOT NULL,
     fecha_hora_fin TEXT,
     FOREIGN KEY (evento_id) REFERENCES evento_sismico(id_evento),
@@ -159,3 +159,32 @@ CREATE TABLE serie_temporal (
     frecuencia_muestreo INTEGER NOT NULL,
     FOREIGN KEY (evento_id) REFERENCES evento_sismico(id_evento)
 );
+
+
+-- Tabla TipoDeDato
+CREATE TABLE tipo_de_dato (
+    id_tipo_de_dato INTEGER PRIMARY KEY AUTOINCREMENT,
+    denominacion VARCHAR(100) NOT NULL,
+    nombre_unidad_medida VARCHAR(50),
+    valor_umbral DOUBLE
+);
+
+-- Tabla MuestraSismica
+CREATE TABLE muestra_sismica (
+    id_muestra INTEGER PRIMARY KEY AUTOINCREMENT,
+    fecha_hora_muestra TEXT NOT NULL,
+    id_serie INTEGER NOT NULL,
+    FOREIGN KEY (id_serie) REFERENCES serie_temporal(id_serie)
+);
+
+-- Tabla DetalleMuestraSismica
+CREATE TABLE detalle_muestra_sismica (
+    id_detalle INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_muestra INTEGER NOT NULL,
+    valor DOUBLE NOT NULL,
+    id_tipo_de_dato INTEGER NOT NULL,
+    FOREIGN KEY (id_muestra) REFERENCES muestra_sismica(id_muestra),
+    FOREIGN KEY (id_tipo_de_dato) REFERENCES tipo_de_dato(id_tipo_de_dato)
+);
+
+

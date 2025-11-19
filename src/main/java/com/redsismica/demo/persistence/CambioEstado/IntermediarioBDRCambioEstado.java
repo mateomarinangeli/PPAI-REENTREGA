@@ -179,4 +179,39 @@ public class IntermediarioBDRCambioEstado implements IIntermediarioBDRCambioEsta
             throw new RuntimeException("Error al insertar CambioEstado para Evento ID: " + idEvento, e);
         }
     }
+
+    @Override
+    public void update(CambioEstado cambio) {
+        String sql = "UPDATE cambio_estado " +
+                "SET estado_id = ?, empleado_id = ?, fecha_hora_inicio = ?, fecha_hora_fin = ? " +
+                "WHERE id_cambio_estado = ?";
+
+        // 🛑 Igual que en insert: obtenemos IDs de las referencias
+        int empleadoId = cambio.getEmpleado().getIdEmpleado();
+        int estadoId = estadoMapper.findIdByNombre(cambio.getEstado().getNombre());
+
+        String fechaInicioTexto =
+                cambio.getFechaHoraInicio() != null ? cambio.getFechaHoraInicio().toString() : null;
+
+        String fechaFinTexto =
+                cambio.getFechaHoraFin() != null ? cambio.getFechaHoraFin().toString() : null;
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, estadoId);
+            stmt.setInt(2, empleadoId);
+            stmt.setString(3, fechaInicioTexto);
+            stmt.setString(4, fechaFinTexto);
+            stmt.setInt(5, cambio.getIdCambioEstado());
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "Error al actualizar CambioEstado con ID " + cambio.getIdCambioEstado(), e
+            );
+        }
+    }
+
 }

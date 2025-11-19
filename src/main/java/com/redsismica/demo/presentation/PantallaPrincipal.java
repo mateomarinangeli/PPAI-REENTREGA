@@ -130,7 +130,6 @@ public class PantallaPrincipal extends JFrame {
         tabla.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         tabla.setRowHeight(28);
 
-        // FlatLaf: estilo moderno
         tabla.putClientProperty("FlatLaf.style", "rowHeight:28;");
         tabla.setGridColor(new Color(220, 220, 220));
 
@@ -147,6 +146,24 @@ public class PantallaPrincipal extends JFrame {
         panelRevision.add(titulo, BorderLayout.NORTH);
         panelRevision.add(scroll, BorderLayout.CENTER);
 
+        // ---- Botón Seleccionar Evento ----
+        JButton btnSeleccionar = new JButton("Seleccionar Evento");
+        btnSeleccionar.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnSeleccionar.putClientProperty(FlatClientProperties.STYLE, """
+        background: #0078FF;
+        foreground: #FFFFFF;
+        arc: 20;
+        borderWidth: 0;
+        focusWidth: 2;
+    """);
+
+        btnSeleccionar.addActionListener(e -> tomarSeleccionEvento(tabla));
+
+        JPanel panelBoton = new JPanel();
+        panelBoton.add(btnSeleccionar);
+
+        panelRevision.add(panelBoton, BorderLayout.SOUTH);
+
         // Refrescar UI
         panelRevision.revalidate();
         panelRevision.repaint();
@@ -154,5 +171,107 @@ public class PantallaPrincipal extends JFrame {
         // Cambiar pantalla si aún no está visible
         cardLayout.show(panelCards, "revision");
     }
+
+    private void tomarSeleccionEvento(JTable tabla) {
+        int fila = tabla.getSelectedRow();
+
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this,
+                    "Debe seleccionar un evento de la tabla.",
+                    "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // El ID está en la columna 0
+        int idEvento = (int) tabla.getValueAt(fila, 0);
+
+        gestor.tomarSeleccionEvento(idEvento, this);
+    }
+
+    public void mostrarDatosEvento(List<String> datosSismicos, EventoCompletoDTO eventoCompletoDTO) {
+        panelRevision.removeAll();
+        panelRevision.setLayout(new BorderLayout(10, 10));
+        panelRevision.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Panel principal con scroll
+        JPanel contenido = new JPanel();
+        contenido.setLayout(new BoxLayout(contenido, BoxLayout.Y_AXIS));
+
+        // ----- Datos generales del evento -----
+        JPanel panelDatosGenerales = new JPanel(new GridLayout(1, 3, 15, 10));
+        panelDatosGenerales.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Color.BLUE, 1), "Datos Generales"
+        ));
+
+        JLabel lblAlcance = new JLabel("Alcance: " + datosSismicos.get(0));
+        lblAlcance.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        JLabel lblClasificacion = new JLabel("Clasificación: " + datosSismicos.get(1));
+        lblClasificacion.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        JLabel lblOrigen = new JLabel("Origen: " + datosSismicos.get(2));
+        lblOrigen.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+        panelDatosGenerales.add(lblAlcance);
+        panelDatosGenerales.add(lblClasificacion);
+        panelDatosGenerales.add(lblOrigen);
+
+        contenido.add(panelDatosGenerales);
+        contenido.add(Box.createRigidArea(new Dimension(0, 15)));
+
+        // ----- Series temporales -----
+        for (SerieDTO serie : eventoCompletoDTO.series) {
+            JPanel panelSerie = new JPanel();
+            panelSerie.setLayout(new BoxLayout(panelSerie, BoxLayout.Y_AXIS));
+            panelSerie.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(Color.DARK_GRAY, 1),
+                    "Serie ID: " + serie.idSerie
+            ));
+            panelSerie.setBackground(new Color(245, 245, 245));
+            panelSerie.setOpaque(true);
+            panelSerie.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panelSerie.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createEmptyBorder(5, 5, 5, 5),
+                    panelSerie.getBorder()
+            ));
+
+            // ----- Muestras de la serie -----
+            for (MuestraDTO muestra : serie.muestras) {
+                JPanel panelMuestra = new JPanel();
+                panelMuestra.setLayout(new BoxLayout(panelMuestra, BoxLayout.Y_AXIS));
+                panelMuestra.setBorder(BorderFactory.createTitledBorder(
+                        "Muestra: " + muestra.fechaHoraMuestra
+                ));
+                panelMuestra.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                // Detalles de la muestra
+                for (DetalleMuestraDTO detalle : muestra.detalles) {
+                    JLabel lblDetalle = new JLabel(
+                            detalle.tipo.denominacion + " (" + detalle.tipo.nombreUnidadMedida + "): " +
+                                    detalle.valor
+                    );
+                    lblDetalle.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+                    lblDetalle.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 0));
+                    panelMuestra.add(lblDetalle);
+                }
+
+                panelSerie.add(panelMuestra);
+                panelSerie.add(Box.createRigidArea(new Dimension(0, 5)));
+            }
+
+            contenido.add(panelSerie);
+            contenido.add(Box.createRigidArea(new Dimension(0, 10)));
+        }
+
+        // Scroll pane para todo el contenido
+        JScrollPane scroll = new JScrollPane(contenido,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroll.getVerticalScrollBar().setUnitIncrement(16); // suaviza scroll
+
+        panelRevision.add(scroll, BorderLayout.CENTER);
+        panelRevision.revalidate();
+        panelRevision.repaint();
+    }
+
 
 }

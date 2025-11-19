@@ -1,6 +1,10 @@
 package com.redsismica.demo.persistence.SerieTemporal;
 
+import com.redsismica.demo.domain.MuestraSismica;
 import com.redsismica.demo.domain.SerieTemporal;
+import com.redsismica.demo.persistence.MuestraSismica.IIntermediarioBDRMuestraSismica;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Value;
 // import com.redsismica.demo.persistence.EventoSismico.IIntermediarioBDREventoSismico;
@@ -16,6 +20,8 @@ public class IntermediarioBDRSerieTemporal implements IIntermediarioBDRSerieTemp
     private final String dbUrl;
     // Inyección del Mapper del objeto referenciado
     // private final IIntermediarioBDREventoSismico eventoMapper;
+    @Lazy
+    private IIntermediarioBDRMuestraSismica muestraMapper;
 
     public IntermediarioBDRSerieTemporal(
             @Value("${spring.datasource.url}") String dbUrl) {
@@ -26,6 +32,11 @@ public class IntermediarioBDRSerieTemporal implements IIntermediarioBDRSerieTemp
 
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(this.dbUrl);
+    }
+
+    @Autowired
+    public void setMuestraMapper(@Lazy IIntermediarioBDRMuestraSismica muestraMapper) {
+        this.muestraMapper = muestraMapper;
     }
 
     private SerieTemporal mapResultSet(ResultSet rs) throws SQLException {
@@ -47,6 +58,11 @@ public class IntermediarioBDRSerieTemporal implements IIntermediarioBDRSerieTemp
         }
         if (fechaRegistroTexto != null) {
             serie.setFechaHoraRegistro(LocalDateTime.parse(fechaRegistroTexto));
+        }
+
+        if (muestraMapper != null) {
+            List<MuestraSismica> muestras = muestraMapper.findAllBySerieId(rs.getInt("id_serie"));
+            serie.setMuestrasSismicas(muestras);
         }
 
         return serie;

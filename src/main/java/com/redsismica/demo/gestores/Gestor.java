@@ -1,9 +1,9 @@
 package com.redsismica.demo.gestores;
 
 // Importar anotaciones de Spring
-import com.redsismica.demo.domain.EventoSismico;
-import com.redsismica.demo.presentation.EventoResumenDTO;
-import com.redsismica.demo.presentation.PantallaPrincipal;
+import com.redsismica.demo.domain.*;
+import com.redsismica.demo.domain.state.CambioEstado;
+import com.redsismica.demo.presentation.*;
 import org.springframework.stereotype.Component;
 import com.redsismica.demo.persistence.AlcanceSismo.IIntermediarioBDRAlcanceSismo;
 import com.redsismica.demo.persistence.ClasificacionSismo.IIntermediarioBDRClasificacionSismo;
@@ -20,6 +20,8 @@ import com.redsismica.demo.persistence.Sismografo.IIntermediarioBDRSismografo;
 import com.redsismica.demo.persistence.Usuario.IIntermediarioBDRUsuario;
 
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -148,5 +150,75 @@ public class Gestor {
         }
 
         return autodetectados;
+    }
+
+    public void tomarSeleccionEvento(int idEvento, PantallaPrincipal pantalla) {
+        EventoSismico eventoSeleccionado = intermediarioEventoSismico.findById(idEvento);
+        LocalDateTime fechaHoraActual = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+        List<CambioEstado> cambiosEstado = eventoSeleccionado.bloquear(fechaHoraActual);
+
+        // Se persiste el evento y los cambios de estado
+        intermediarioEventoSismico.update(eventoSeleccionado);
+        intermediarioCambioEstado.update(cambiosEstado.get(0));
+        intermediarioCambioEstado.insert(cambiosEstado.get(1), idEvento);
+
+        // Se buscan los datos sísmicos
+        List<String> datosSismicos = eventoSeleccionado.buscarDatosSismicos();
+        EventoCompletoDTO eventoCompletoDTO = mapEventoToDTO(eventoSeleccionado);
+        pantalla.mostrarDatosEvento(datosSismicos, eventoCompletoDTO);
+    }
+
+    public EventoCompletoDTO mapEventoToDTO(EventoSismico evento) {
+        EventoCompletoDTO dto = new EventoCompletoDTO();
+        dto.setIdEvento(evento.getIdEvento());
+        dto.setFechaHora(evento.getFechaHoraOcurrencia().toString());
+
+        dto.series = new ArrayList<>();
+        for (SerieTemporal serie : evento.getSerieTemporal()) { // lazy loading aquí
+            dto.series.add(mapSerieToDTO(serie));
+        }
+
+        return dto;
+    }
+
+    private SerieDTO mapSerieToDTO(SerieTemporal serie) {
+        SerieDTO dto = new SerieDTO();
+        dto.setIdSerie(serie.getIdSerieTemporal());
+
+        dto.muestras = new ArrayList<>();
+        if (serie.getMuestrasSismicas() != null) { // lazy
+            for (MuestraSismica muestra : serie.getMuestrasSismicas()) {
+                dto.muestras.add(mapMuestraToDTO(muestra));
+            }
+        }
+
+        return dto;
+    }
+
+    private MuestraDTO mapMuestraToDTO(MuestraSismica muestra) {
+        MuestraDTO dto = new MuestraDTO();
+        dto.setFechaHoraMuestra(muestra.getFechaHoraMuestra());
+        dto.detalles = new ArrayList<>();
+        if (muestra.getDetalleMuestraSismica() != null) { // lazy
+            for (DetalleMuestraSismica detalle : muestra.getDetalleMuestraSismica()) {
+                dto.detalles.add(mapDetalleToDTO(detalle));
+            }
+        }
+
+        return dto;
+    }
+
+    private DetalleMuestraDTO mapDetalleToDTO(DetalleMuestraSismica detalle) {
+        DetalleMuestraDTO dto = new DetalleMuestraDTO();
+        dto.valor = detalle.getValor();
+        dto.tipo = mapTipoDeDatoToDTO(detalle.getTipoDeDato());
+        return dto;
+    }
+
+    private TipoDeDatoDTO mapTipoDeDatoToDTO(TipoDeDato tipo) {
+        TipoDeDatoDTO dto = new TipoDeDatoDTO();
+        dto.denominacion = tipo.getDenominacion();
+        dto.nombreUnidadMedida = tipo.getNombreUnidadMedida();
+        return dto;
     }
 }

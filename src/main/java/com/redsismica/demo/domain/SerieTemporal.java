@@ -1,6 +1,7 @@
 package com.redsismica.demo.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class SerieTemporal {
     private boolean condicionAlarma;
@@ -8,6 +9,7 @@ public class SerieTemporal {
     private LocalDateTime fechaHoraRegistro;
     private int frecuenciaMuestreo;
     private int idSerieTemporal;
+    private List<MuestraSismica> muestrasSismicas;
 
     public int getIdSerieTemporal() {
         return idSerieTemporal;
@@ -47,5 +49,13 @@ public class SerieTemporal {
 
     public void setFrecuenciaMuestreo(int frecuenciaMuestreo) {
         this.frecuenciaMuestreo = frecuenciaMuestreo;
+    }
+
+    public List<MuestraSismica> getMuestrasSismicas() {
+        return muestrasSismicas;
+    }
+
+    public void setMuestrasSismicas(List<MuestraSismica> muestrasSismicas) {
+        this.muestrasSismicas = muestrasSismicas;
     }
 }

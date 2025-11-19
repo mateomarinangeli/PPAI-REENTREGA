@@ -4,6 +4,7 @@ import com.redsismica.demo.domain.state.CambioEstado;
 import com.redsismica.demo.domain.state.Estado;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventoSismico {
@@ -158,5 +159,18 @@ public class EventoSismico {
 
     public boolean esAutoDetectado() {
         return estadoActual.esAutoDetectado();
+    }
+
+    public List<CambioEstado> bloquear(LocalDateTime fechaHora) {
+        List<CambioEstado> cambiosEstado = estadoActual.bloquear(this, fechaHora);
+        return cambiosEstado;
+    }
+
+    public List<String> buscarDatosSismicos() {
+        List<String> datosSismicos = new ArrayList<>();
+        datosSismicos.add(alcanceSismo.getNombre());
+        datosSismicos.add(clasificacion.getNombre());
+        datosSismicos.add(origenGeneracion.getNombre());
+        return datosSismicos;
     }
 }
