@@ -22,6 +22,7 @@ public class BloqueadoEnRevision extends Estado {
         nuevoCE.setEstado(rechazado);
         nuevoCE.setEmpleado(evento.getAnalistaSupervisor());
         evento.setEstadoActual(rechazado);
+        evento.agregarCambioEstado(nuevoCE);
 
         List<CambioEstado> cambiosEstado = new ArrayList<>();
         cambiosEstado.add(CEActual);
