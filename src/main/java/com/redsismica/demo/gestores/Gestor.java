@@ -104,7 +104,7 @@ public class Gestor {
     }
 
     public void opcRegistrarResultadoRevisionManual(PantallaPrincipal pantalla) {
-        this.sesion = intermediarioSesion.findById(2);
+        this.sesion = intermediarioSesion.findById(1);
         List<EventoSismico> eventosAutoDetectados = buscarEventosSismicosAutoDetectados();
         List<EventoSismico> eventosOrdenados = ordenarEventos(eventosAutoDetectados);
         List<EventoResumenDTO> eventosParaMostrar = prepararEventosParaMostrar(eventosOrdenados);
@@ -239,6 +239,38 @@ public class Gestor {
             LocalDateTime fechaHoraActual = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
             Empleado empleado = sesion.obtenerEmpleadoDeSesion();
             List<CambioEstado> cambiosEstado = eventoSeleccionado.rechazarEvento(fechaHoraActual, empleado);
+            intermediarioEventoSismico.update(eventoSeleccionado);
+            intermediarioCambioEstado.update(cambiosEstado.get(0));
+            intermediarioCambioEstado.insert(cambiosEstado.get(1), eventoSeleccionado.getIdEvento());
+        }
+
+    }
+
+    public void tomarSeleccionConfirmacion(PantallaPrincipal pantallaPrincipal) {
+        if (!eventoSeleccionado.validarEvento()) {
+            System.out.println("El evento está incompleto: le falta alcance, magnitud o origen.");
+            return;
+        }
+        else {
+            LocalDateTime fechaHoraActual = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+            Empleado empleado = sesion.obtenerEmpleadoDeSesion();
+            List<CambioEstado> cambiosEstado = eventoSeleccionado.confirmarEvento(fechaHoraActual, empleado);
+            intermediarioEventoSismico.update(eventoSeleccionado);
+            intermediarioCambioEstado.update(cambiosEstado.get(0));
+            intermediarioCambioEstado.insert(cambiosEstado.get(1), eventoSeleccionado.getIdEvento());
+        }
+
+    }
+
+    public void tomarSeleccionSolicitudRevisionExperto(PantallaPrincipal pantallaPrincipal) {
+        if (!eventoSeleccionado.validarEvento()) {
+            System.out.println("El evento está incompleto: le falta alcance, magnitud o origen.");
+            return;
+        }
+        else {
+            LocalDateTime fechaHoraActual = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+            Empleado empleado = sesion.obtenerEmpleadoDeSesion();
+            List<CambioEstado> cambiosEstado = eventoSeleccionado.solicitarRevisionEvento(fechaHoraActual, empleado);
             intermediarioEventoSismico.update(eventoSeleccionado);
             intermediarioCambioEstado.update(cambiosEstado.get(0));
             intermediarioCambioEstado.insert(cambiosEstado.get(1), eventoSeleccionado.getIdEvento());

@@ -78,16 +78,20 @@ public abstract class Estado {
         throw new UnsupportedOperationException("Operación 'anular' no soportada en este estado.");
     }
 
-    public void verificarVentanaTemporal() {
-        throw new UnsupportedOperationException("Operación 'verificarVentanaTemporal' no soportada en este estado.");
-    }
-
-    public void verificarTiempoAceptacion() {
-        throw new UnsupportedOperationException("Operación 'verificarTiempoAceptacion' no soportada en este estado.");
-    }
-
     public List<CambioEstado> rechazar(EventoSismico evento, LocalDateTime fechaHora, Empleado empleado) {
         throw new UnsupportedOperationException("Operación 'rechazar' no soportada en este estado.");
+    }
+
+    public void dejarSinRevision() {
+        throw new UnsupportedOperationException("Operación 'dejarSinRevision' no soportada en este estado.");
+    }
+
+    public List<CambioEstado> confirmar(EventoSismico evento, LocalDateTime fechaHora, Empleado e) {
+        throw new UnsupportedOperationException("Operación 'confirmar' no soportada en este estado.");
+    }
+
+    public List<CambioEstado> solicitarRevision(EventoSismico evento, LocalDateTime fechaHora, Empleado e) {
+        throw new UnsupportedOperationException("Operación 'solicitar revision' no soportada en este estado.");
     }
 }
 

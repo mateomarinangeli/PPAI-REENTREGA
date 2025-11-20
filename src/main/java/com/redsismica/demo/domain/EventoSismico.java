@@ -187,4 +187,14 @@ public class EventoSismico {
     public void agregarCambioEstado(CambioEstado nuevoCE) {
         cambioEstado.add(nuevoCE);
     }
+
+    public List<CambioEstado> confirmarEvento(LocalDateTime fechaHoraActual, Empleado empleado) {
+        List<CambioEstado> cambiosEstado = estadoActual.confirmar(this, fechaHoraActual, empleado);
+        return cambiosEstado;
+    }
+
+    public List<CambioEstado> solicitarRevisionEvento(LocalDateTime fechaHoraActual, Empleado empleado) {
+        List<CambioEstado> cambiosEstado = estadoActual.solicitarRevision(this, fechaHoraActual, empleado);
+        return cambiosEstado;
+    }
 }

@@ -10,7 +10,8 @@ INSERT INTO estado (nombre) VALUES
 ('EventoSinRevision'),
 ('PendienteDeCierre'),
 ('PendienteDeRevision'),
-('Rechazado');
+('Rechazado'),
+('SolicitudRevisionExperto');;
 
 ------------------------------------------------------------
 -- ALCANCE DEL SISMO

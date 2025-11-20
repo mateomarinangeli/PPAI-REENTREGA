@@ -389,7 +389,7 @@ public class PantallaPrincipal extends JFrame {
         arc: 15;
         borderWidth: 0;
     """);
-        btnConfirmarEvento.addActionListener(e -> { /* Acción pendiente */ });
+        btnConfirmarEvento.addActionListener(e -> tomarSeleccionConfirmacion());
 
         // --- Botón 4: Rechazar Evento (Peligro/Acción negativa) ---
         JButton btnRechazarEvento = new JButton("Rechazar Evento");
@@ -411,7 +411,7 @@ public class PantallaPrincipal extends JFrame {
         arc: 15;
         borderWidth: 0;
     """);
-        btnSolicitarRevision.addActionListener(e -> { /* Acción pendiente */ });
+        btnSolicitarRevision.addActionListener(e -> tomarSeleccionSolicitudRevisionExperto());
 
 
         // Añadir todos los botones al panel
@@ -436,6 +436,26 @@ public class PantallaPrincipal extends JFrame {
                 this,
                 "El evento ha sido rechazado con éxito!",
                 "Rechazo completado",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+
+    private void tomarSeleccionConfirmacion() {
+        gestor.tomarSeleccionConfirmacion(this);
+        JOptionPane.showMessageDialog(
+                this,
+                "El evento ha sido confirmado con éxito!",
+                "Confirmacion completada",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+
+    private void tomarSeleccionSolicitudRevisionExperto() {
+        gestor.tomarSeleccionSolicitudRevisionExperto(this);
+        JOptionPane.showMessageDialog(
+                this,
+                "El evento se ha enviado para revisión de experto!",
+                "Solicitud completada",
                 JOptionPane.INFORMATION_MESSAGE
         );
     }

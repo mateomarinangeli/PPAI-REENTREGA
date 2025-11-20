@@ -44,4 +44,41 @@ public class BloqueadoEnRevision extends Estado {
 
         return null; // si no encontró ninguno abierto
     }
+
+    @Override
+    public List<CambioEstado> confirmar(EventoSismico evento, LocalDateTime fechaHora, Empleado empleado) {
+        CambioEstado CEActual = buscarCEActual(evento);
+        CEActual.setFechaHoraFin(fechaHora);
+        CambioEstado nuevoCE = new CambioEstado();
+        nuevoCE.setFechaHoraInicio(fechaHora);
+        Confirmado confirmado = new Confirmado();
+        nuevoCE.setEstado(confirmado);
+        nuevoCE.setEmpleado(empleado);
+        evento.setEstadoActual(confirmado);
+        evento.agregarCambioEstado(nuevoCE);
+
+        List<CambioEstado> cambiosEstado = new ArrayList<>();
+        cambiosEstado.add(CEActual);
+        cambiosEstado.add(nuevoCE);
+        return cambiosEstado;
+    }
+
+    @Override
+    public List<CambioEstado> solicitarRevision(EventoSismico evento, LocalDateTime fechaHora, Empleado empleado) {
+        // 1. Cerrar el cambio de estado actual
+        CambioEstado CEActual = buscarCEActual(evento);
+        CEActual.setFechaHoraFin(fechaHora);
+        CambioEstado nuevoCE = new CambioEstado();
+        nuevoCE.setFechaHoraInicio(fechaHora);
+        SolicitudRevisionExperto revisionExperto = new SolicitudRevisionExperto();
+        nuevoCE.setEstado(revisionExperto);
+        nuevoCE.setEmpleado(empleado);
+        evento.setEstadoActual(revisionExperto);
+        evento.agregarCambioEstado(nuevoCE);
+
+        List<CambioEstado> cambiosEstado = new ArrayList<>();
+        cambiosEstado.add(CEActual);
+        cambiosEstado.add(nuevoCE);
+        return cambiosEstado;
+    }
 }
